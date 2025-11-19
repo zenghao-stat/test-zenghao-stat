@@ -34,9 +34,14 @@ const HAO_DATA = {
     ],
     location: "Shenzhen, China",
     bio: "Heterogeneity nourishes statistics; independence begets probability; uncertainty is eternal. I focus on model-free statistical machine learning theory, predictive inference (Conformal Prediction), and interdisciplinary research at the intersection of LLMs, spatial statistics, and econometrics.",
-    email: "zenghao@sustech.edu.cn",
+    email: "zenghao.acmail@gmail.com",
     scholar: "https://scholar.google.com/citations?user=-EiBHeIAAAAJ&hl=en",
-    github: "https://github.com/zenghao-stat"
+    github: "https://github.com/zenghao-stat",
+    openreview: "https://openreview.net/profile?id=%7EHao_Zeng8",
+    siteUrl: "https://zenghao-stat.github.io",
+    cvUrl: "https://zenghao-stat.github.io/cv_folder/cv.pdf",
+    teachingUrl: "https://zenghao-stat.github.io/teaching/",
+    seminarsUrl: "https://zenghao-stat.github.io/seminars/"
   },
   news: [
     { date: "Nov 2025", content: "Paper 'Transfer Learning for Spatial Autoregressive Models' accepted to **Journal of Business & Economic Statistics (JBES)**." },
@@ -221,7 +226,7 @@ export default function App() {
     </a>
   );
 
-  const NavItem: React.FC<{ href: string; active: boolean; onClick: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }> = ({ href, active, onClick, children }) => (
+  const NavItem: React.FC<{ href: string; active: boolean; onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void; children: React.ReactNode }> = ({ href, active, onClick, children }) => (
     <a
       href={href}
       onClick={onClick}
@@ -231,6 +236,17 @@ export default function App() {
           ? `${theme.text} bg-opacity-10 bg-slate-500` 
           : `${theme.textMuted} hover:${theme.text} hover:bg-opacity-5 hover:bg-slate-500`}
       `}
+    >
+      {children}
+    </a>
+  );
+
+  const ExtNavItem: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${theme.textMuted} hover:${theme.text} hover:bg-opacity-5 hover:bg-slate-500`}
     >
       {children}
     </a>
@@ -280,6 +296,9 @@ export default function App() {
                   {item}
                 </NavItem>
               ))}
+              <ExtNavItem href={HAO_DATA.profile.cvUrl}>CV</ExtNavItem>
+              <ExtNavItem href={HAO_DATA.profile.teachingUrl}>Teaching</ExtNavItem>
+              <ExtNavItem href={HAO_DATA.profile.seminarsUrl}>Seminars</ExtNavItem>
             </nav>
 
             <div className="relative">
@@ -344,6 +363,9 @@ export default function App() {
                 {item}
               </NavItem>
             ))}
+            <a href={HAO_DATA.profile.cvUrl} target="_blank" rel="noopener noreferrer" className={`${theme.textMuted} hover:${theme.text}`}>CV</a>
+            <a href={HAO_DATA.profile.teachingUrl} target="_blank" rel="noopener noreferrer" className={`${theme.textMuted} hover:${theme.text}`}>Teaching</a>
+            <a href={HAO_DATA.profile.seminarsUrl} target="_blank" rel="noopener noreferrer" className={`${theme.textMuted} hover:${theme.text}`}>Seminars</a>
           </nav>
         )}
       </header>
@@ -386,11 +408,13 @@ export default function App() {
                 <div className={`font-sans font-bold ${theme.text} mb-1 uppercase text-xs tracking-widest`}>Connect</div>
                 <ActionLink href={HAO_DATA.profile.scholar} icon={BookOpen}>Google Scholar</ActionLink>
                 <ActionLink href={HAO_DATA.profile.github} icon={Github}>GitHub</ActionLink>
+                <ActionLink href={HAO_DATA.profile.openreview} icon={Book}>OpenReview</ActionLink>
                 <ActionLink href={`mailto:${HAO_DATA.profile.email}`} icon={Mail}>Email</ActionLink>
               </MarginNote>
               <MobileNote>
                  <ActionLink href={HAO_DATA.profile.scholar} icon={BookOpen}>Google Scholar</ActionLink>
                  <ActionLink href={HAO_DATA.profile.github} icon={Github}>GitHub</ActionLink>
+                 <ActionLink href={HAO_DATA.profile.openreview} icon={Book}>OpenReview</ActionLink>
                  <ActionLink href={`mailto:${HAO_DATA.profile.email}`} icon={Mail}>Email</ActionLink>
               </MobileNote>
               <div className={`mt-12 pt-8 border-t ${theme.border}`}>
@@ -519,9 +543,9 @@ export default function App() {
         <div className={`max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm ${theme.textMuted} font-sans`}>
            <p>&copy; 2025 Hao Zeng. All rights reserved.</p>
            <div className="flex gap-4 mt-4 md:mt-0">
-             <a href="#" className={`hover:${theme.text}`}>Google Scholar</a>
-             <a href="#" className={`hover:${theme.text}`}>GitHub</a>
-             <a href="#" className={`hover:${theme.text}`}>Twitter</a>
+             <a href={HAO_DATA.profile.scholar} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text}`}>Google Scholar</a>
+             <a href={HAO_DATA.profile.github} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text}`}>GitHub</a>
+             <a href={HAO_DATA.profile.openreview} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text}`}>OpenReview</a>
            </div>
         </div>
       </footer>
