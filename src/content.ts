@@ -1,3 +1,5 @@
+import publicationsData from './publications.json';
+
 export interface Profile {
   name: string;
   cnName: string;
@@ -13,6 +15,7 @@ export interface Profile {
   cvUrl: string;
   teachingUrl: string;
   seminarsUrl: string;
+  avatarUrl: string;
 }
 
 export interface Publication {
@@ -20,10 +23,11 @@ export interface Publication {
   title: string;
   authors: string;
   venue: string;
-  type: 'Conference' | 'Journal' | 'Preprint';
+  type: 'Conference' | 'Journal' | 'Preprint' | 'Software';
   year: string;
   pdf?: string;
   code?: string;
+  url?: string; // arxiv 或其他链接
 }
 
 export interface Content {
@@ -40,10 +44,10 @@ export const HAO_DATA: Content = {
     title: 'Postdoctoral Researcher',
     affiliations: [
       'Southern University of Science and Technology (SUSTech)',
-      'National University of Singapore (NUS)'
+      'National University of Singapore (NUS)',
     ],
     location: 'Shenzhen, China',
-    bio: 'Heterogeneity nourishes statistics; independence begets probability; uncertainty is eternal. I focus on model-free statistical machine learning theory, predictive inference (Conformal Prediction), and interdisciplinary research at the intersection of LLMs, spatial statistics, and econometrics.',
+    bio: `I am currently a Postdoctoral in Statistics at SUSTech and NUS, Department of Statistics and Data Science, supported by the SUSTech-NUS Joint Research Program, supervised by Prof. Bingyi Jing, Prof. Hongxin Wei, and Prof. Wang Zhou. I obtained my PhD in Statistics from Gregory and Paula Chow Institute for Studies in Economics, Xiamen University in 2024. My research focuses on model-free statistical machine learning theory, methods, and their applications on predictive inference. I am also interested in interdisciplinary research at the intersection of machine learning with LLM, spatial statistics, econometrics, and biostatistics.`,
     email: 'zenghao.acmail@gmail.com',
     scholar: 'https://scholar.google.com/citations?user=-EiBHeIAAAAJ&hl=en',
     github: 'https://github.com/zenghao-stat',
@@ -51,25 +55,46 @@ export const HAO_DATA: Content = {
     siteUrl: 'https://zenghao-stat.github.io',
     cvUrl: 'https://zenghao-stat.github.io/cv_folder/cv.pdf',
     teachingUrl: 'https://zenghao-stat.github.io/teaching/',
-    seminarsUrl: 'https://zenghao-stat.github.io/seminars/'
+    seminarsUrl: 'https://zenghao-stat.github.io/seminars/',
+    avatarUrl: './images/profile.jpg',
   },
   news: [
-    { date: 'Nov 2025', content: "Paper 'Transfer Learning for Spatial Autoregressive Models' accepted to **Journal of Business & Economic Statistics (JBES)**." },
-    { date: 'Jul 2025', content: "Paper 'Parametric Scaling Law of Tuning Bias' accepted to **ICML 2025**." },
-    { date: 'May 2025', content: "Paper on 'Online Conformal Prediction' accepted to **NeurIPS 2025**." },
-    { date: 'Jul 2024', content: 'Joined SUSTech & NUS Joint Research Program as a Postdoc.' },
-    { date: 'Jun 2024', content: 'Graduated with Ph.D. in Statistics from Xiamen University.' }
+    {
+      date: 'Nov 2025',
+      content:
+        "Paper 'Transfer Learning for Spatial Autoregressive Models' accepted to **Journal of Business & Economic Statistics**!",
+    },
+    {
+      date: 'Sep 2025',
+      content:
+        "Paper 'Robust Online Conformal Prediction under Uniform Label Noise' accepted to **NeurIPS 2026**!",
+    },
+    {
+      date: 'May 2025',
+      content:
+        "Paper 'Parametric Scaling Law of Tuning Bias in Conformal Prediction' accepted to **ICML 2025**!",
+    },
+    {
+      date: 'Jul 2024',
+      content:
+        'Started postdoctoral position at SUSTech under the SUSTech-NUS Joint Research Program.',
+    },
+    {
+      date: 'Jun 2024',
+      content: 'Graduated with Ph.D. in Statistics from Xiamen University.',
+    },
   ],
-  publications: [
-    { id: 1, title: 'Parametric Scaling Law of Tuning Bias in Conformal Prediction', authors: 'Hao Zeng*, K Liu*, B Jing, H Wei', venue: 'ICML 2025', type: 'Conference', year: '2025', pdf: '', code: '#' },
-    { id: 2, title: 'Transfer Learning for Spatial Autoregressive Models with Application to U.S. Presidential Election Prediction', authors: 'Hao Zeng, W Zhong, X Xu', venue: 'Journal of Business & Economic Statistics (JBES)', type: 'Journal', year: '2025', pdf: '#' },
-    { id: 3, title: 'Exploring the Noise Robustness of Online Conformal Prediction', authors: 'H Xi, K Liu, Hao Zeng, W Sun, H Wei', venue: 'NeurIPS 2025', type: 'Conference', year: '2025', pdf: '#', code: '#' },
-    { id: 4, title: 'PAC Reasoning: Controlling the Performance Loss for Efficient Reasoning', authors: 'Hao Zeng*, J Huang*, B Jing, H Wei, B An', venue: 'arXiv Preprint', type: 'Preprint', year: '2025', pdf: '#' },
-    { id: 5, title: 'Robust Integrative Analysis via Quantile Regression with Homogeneity and Sparsity', authors: 'Hao Zeng, C Wan, W Zhong, T Liu', venue: 'Journal of Statistical Planning and Inference', type: 'Journal', year: '2025', pdf: '#' }
-  ],
+  // 从 publications.json 导入论文数据
+  publications: publicationsData as Publication[],
   services: [
-    { type: 'Conference Reviewer', items: ['NeurIPS (2024, 2025)', 'ICML (2024, 2025)', 'ICLR (2025)', 'AISTATS (2024)'] },
-    // { type: 'Journal Reviewer', items: ['Journal of the American Statistical Association (JASA)', 'Annals of Statistics', 'Journal of Business & Economic Statistics (JBES)'] },
-    // { type: 'Workshop', items: ['Organizer, CP-LLM Workshop \u0040 NeurIPS 2025'] }
-  ]
+    {
+      type: 'Conference Reviewer',
+      items: [
+        'NeurIPS (2024, 2025)',
+        'ICML (2024, 2025)',
+        'ICLR (2025, 2026)',
+        'AISTATS (2024)',
+      ],
+    },
+  ],
 };
