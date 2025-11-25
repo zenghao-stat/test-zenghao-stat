@@ -403,6 +403,16 @@ export default function App() {
                         
                         {/* 链接按钮 */}
                         <div className="flex gap-2 ml-auto">
+                          {pub.url && (
+                            <a 
+                              href={pub.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`flex items-center gap-1 ${theme.textMuted} hover:${theme.accent} transition-colors`}
+                            >
+                              <ExternalLink size={14} /> arXiv
+                            </a>
+                          )}
                           {pub.pdf && pub.pdf !== '#' && (
                             <a 
                               href={pub.pdf}
