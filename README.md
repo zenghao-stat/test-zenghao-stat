@@ -1,4 +1,4 @@
-# test_zenghao-stat
+# zenghao-stat
 
 一个基于 Vite + React 的学术个人主页单页项目，内容数据从 `src/*.json` 读取并在页面中渲染，支持主题切换与 Publications 多维筛选。
 

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { 
   BookOpen, 
   Code, 
@@ -84,13 +84,51 @@ type YearFilter = '2026' | '2025' | '2024' | 'before 2024';
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<ThemeKey>('paper');
+  const isNightByTime = () => {
+    const hour = new Date().getHours();
+    return hour >= 19 || hour < 7;
+  };
+
+  const themeIds = Object.keys(THEMES) as ThemeKey[];
+  const [preferredLightTheme, setPreferredLightTheme] = useState<ThemeKey>('paper');
+  const [currentTheme, setCurrentTheme] = useState<ThemeKey>(() => (isNightByTime() ? 'night' : 'paper'));
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [selectedOnly, setSelectedOnly] = useState(true);
   const [activeTypeFilter, setActiveTypeFilter] = useState<PubType | null>(null);
   const [activeYearFilter, setActiveYearFilter] = useState<YearFilter | null>(null);
 
   const theme = THEMES[currentTheme];
+  const preferredLightThemeRef = useRef(preferredLightTheme);
+  const lastIsNightRef = useRef(isNightByTime());
+
+  useEffect(() => {
+    preferredLightThemeRef.current = preferredLightTheme;
+  }, [preferredLightTheme]);
+
+  useEffect(() => {
+    const maybeSwitchTheme = () => {
+      const isNightNow = isNightByTime();
+      if (isNightNow === lastIsNightRef.current) return;
+      lastIsNightRef.current = isNightNow;
+      setCurrentTheme(isNightNow ? 'night' : preferredLightThemeRef.current);
+    };
+
+    const id = window.setInterval(maybeSwitchTheme, 60 * 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const applyTheme = (nextTheme: ThemeKey) => {
+    setCurrentTheme(nextTheme);
+    if (nextTheme !== 'night') {
+      setPreferredLightTheme(nextTheme);
+    }
+  };
+
+  const cycleTheme = () => {
+    const currentIndex = themeIds.indexOf(currentTheme);
+    const nextTheme = themeIds[(currentIndex + 1) % themeIds.length];
+    applyTheme(nextTheme);
+  };
 
   // 筛选论文
   const filteredPublications = useMemo(() => {
@@ -130,6 +168,7 @@ export default function App() {
     { label: 'News', href: '#news' },
     { label: 'Publications', href: '#publications' },
     { label: 'Teaching', href: '#teaching' },
+    { label: 'Seminar', href: '#seminar' },
     { label: 'Talks', href: '#talks' },
     { label: 'Service', href: '#service' },
   ];
@@ -175,11 +214,15 @@ export default function App() {
             ))}
             
             {/* 主题切换 */}
-            <div className="relative ml-4">
+            <div
+              className="relative ml-4"
+              onMouseEnter={() => setThemeMenuOpen(true)}
+              onMouseLeave={() => setThemeMenuOpen(false)}
+            >
               <button 
-                onClick={() => setThemeMenuOpen(!themeMenuOpen)}
+                onClick={cycleTheme}
                 className={`p-2 rounded-full hover:bg-slate-500/10 transition-colors ${theme.textMuted}`}
-                title="切换主题"
+                title="切换样式"
               >
                 <Palette size={18} />
               </button>
@@ -188,7 +231,7 @@ export default function App() {
                   {Object.values(THEMES).map((t) => (
                     <button
                       key={t.id}
-                      onClick={() => { setCurrentTheme(t.id as ThemeKey); setThemeMenuOpen(false); }}
+                      onClick={() => { applyTheme(t.id as ThemeKey); setThemeMenuOpen(false); }}
                       className={`w-full text-left px-3 py-2 text-sm rounded-md flex items-center justify-between
                         ${currentTheme === t.id ? `${theme.highlight} ${theme.text}` : `${theme.textMuted} hover:bg-slate-500/5`}`}
                     >
@@ -204,11 +247,7 @@ export default function App() {
           {/* 移动端菜单按钮 */}
           <div className="md:hidden flex items-center gap-2">
             <button 
-              onClick={() => {
-                const themeIds = Object.keys(THEMES) as ThemeKey[];
-                const nextIndex = (themeIds.indexOf(currentTheme) + 1) % themeIds.length;
-                setCurrentTheme(themeIds[nextIndex]);
-              }}
+              onClick={cycleTheme}
               className={`p-2 ${theme.textMuted}`}
             >
               <Palette size={20} />
@@ -288,9 +327,15 @@ export default function App() {
                   </p>
                 </div>
 
-                <p className={`text-lg leading-relaxed max-w-3xl text-justify-hyphen ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {HAO_DATA.profile.description}
-                </p>
+                <p
+                  className={`text-lg leading-relaxed max-w-3xl text-justify-hyphen ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}
+                  dangerouslySetInnerHTML={{
+                    __html: HAO_DATA.profile.description.replace(
+                      /\*\*(.*?)\*\*/g,
+                      `<strong class="font-bold ${theme.text}">$1</strong>`
+                    )
+                  }}
+                />
 
                 {/* 社交链接按钮 */}
                 <div className="flex flex-wrap gap-3 pt-2">
@@ -348,7 +393,7 @@ export default function App() {
                 <div key={i} className="relative pl-8 pb-8 last:pb-0">
                   <div className={`absolute left-[-5px] top-1 h-2.5 w-2.5 rounded-full ${theme.accentBg} ring-4 ${currentTheme === 'night' ? 'ring-[#1E293B]' : currentTheme === 'lab' ? 'ring-slate-100' : 'ring-[#F5F3ED]'}`}></div>
                   <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-                    <span className={`text-sm font-medium ${theme.textMuted} min-w-[80px] font-sans`}>{item.date}</span>
+                    <span className={`text-sm font-bold ${theme.textMuted} min-w-[80px] font-sans`}>{item.date}</span>
                     <p 
                       className={`text-base ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}
                       dangerouslySetInnerHTML={{
@@ -518,22 +563,70 @@ export default function App() {
                 <div key={teach.id} className={`${theme.cardBg} border ${theme.border} p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col`}>
                   <div className="flex flex-col gap-2 mb-4">
                     <div className="flex justify-between items-start gap-4">
-                      <h3 className={`text-xl font-bold ${theme.text} leading-tight`}>{teach.title}</h3>
+                      <h3 className={`text-xl font-bold ${theme.text} leading-tight`}>
+                        <a
+                          href={`${import.meta.env.BASE_URL}teaching-and-seminar/${teach.id}.html`}
+                          className={`hover:${theme.accent} transition-colors`}
+                        >
+                          {teach.title}
+                        </a>
+                      </h3>
                       <span className={`text-xs font-bold ${theme.accent} whitespace-nowrap font-sans bg-opacity-10 px-2 py-1 rounded-full ${theme.highlight} shrink-0`}>
                         {teach.date.split('-')[0]}
                       </span>
                     </div>
                     <div className={`flex flex-wrap gap-x-3 gap-y-1 text-sm ${theme.textMuted} font-sans`}>
                       <span className="flex items-center gap-1"><BookOpen size={14} /> {teach.type}</span>
-                      <span className="flex items-center gap-1"><Award size={14} /> {teach.role}</span>
+                      {teach.role && (
+                        <span className="flex items-center gap-1"><Award size={14} /> {teach.role}</span>
+                      )}
                     </div>
                     <div className={`text-sm ${theme.textMuted} font-sans flex items-center gap-1`}>
                        <MapPin size={14} /> {teach.venue}
                     </div>
                   </div>
-                  {teach.excerpt && (
+                  {(teach.excerpt || teach.body) && (
                     <p className={`mt-auto pt-4 border-t ${theme.border} ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-600'} text-sm leading-relaxed`}>
-                      {teach.excerpt}
+                      {teach.excerpt ?? teach.body?.split('\n\n')[0]}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Seminar 区域 */}
+        <section id="seminar" className={`py-16 ${theme.bg} border-t ${theme.border} transition-colors duration-300`}>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>Seminar</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {HAO_DATA.seminars.map((sem) => (
+                <div key={sem.id} className={`${theme.cardBg} border ${theme.border} p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col`}>
+                  <div className="flex flex-col gap-2 mb-4">
+                    <div className="flex justify-between items-start gap-4">
+                      <h3 className={`text-xl font-bold ${theme.text} leading-tight`}>
+                        <a
+                          href={`${import.meta.env.BASE_URL}teaching-and-seminar/${sem.id}.html`}
+                          className={`hover:${theme.accent} transition-colors`}
+                        >
+                          {sem.title}
+                        </a>
+                      </h3>
+                      <span className={`text-xs font-bold ${theme.accent} whitespace-nowrap font-sans bg-opacity-10 px-2 py-1 rounded-full ${theme.highlight} shrink-0`}>
+                        {sem.date.split('-')[0]}
+                      </span>
+                    </div>
+                    <div className={`flex flex-wrap gap-x-3 gap-y-1 text-sm ${theme.textMuted} font-sans`}>
+                      <span className="flex items-center gap-1"><BookOpen size={14} /> {sem.type}</span>
+                    </div>
+                    <div className={`text-sm ${theme.textMuted} font-sans flex items-center gap-1`}>
+                      <MapPin size={14} /> {sem.venue}{sem.location ? ` • ${sem.location}` : ''}
+                    </div>
+                  </div>
+                  {(sem.excerpt || sem.body) && (
+                    <p className={`mt-auto pt-4 border-t ${theme.border} ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-600'} text-sm leading-relaxed`}>
+                      {sem.excerpt ?? sem.body?.split('\n\n')[0]}
                     </p>
                   )}
                 </div>
