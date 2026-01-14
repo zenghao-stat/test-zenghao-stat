@@ -16,7 +16,7 @@
     "venue": "IEEE TCSVT",
     "type": "Journal",
     "year": "2025",
-    "pdf": "https://ieeexplore.ieee.org/abstract/document/10960721/",
+    "url": "https://ieeexplore.ieee.org/abstract/document/10960721/",
     "selected": true
   },
   {
@@ -26,7 +26,7 @@
     "venue": "NeurIPS 2025",
     "type": "Conference",
     "year": "2025",
-    "pdf": "https://openreview.net/forum?id=3veDGO9KiK",
+    "url": "https://openreview.net/forum?id=3veDGO9KiK",
     "selected": true
   },
   {
@@ -36,7 +36,7 @@
     "venue": "ICML 2025",
     "type": "Conference",
     "year": "2025",
-    "pdf": "https://openreview.net/forum?id=jnJLZXSOin",
+    "url": "https://openreview.net/forum?id=jnJLZXSOin",
     "selected": true
   },
   {
@@ -46,7 +46,7 @@
     "venue": "Journal of Statistical Planning and Inference",
     "type": "Journal",
     "year": "2024",
-    "pdf": "https://doi.org/10.1016/j.jspi.2024.106196",
+    "url": "https://doi.org/10.1016/j.jspi.2024.106196",
     "selected": true
   },
   {
@@ -56,7 +56,7 @@
     "venue": "Scandinavian Journal of Statistics",
     "type": "Journal",
     "year": "2024",
-    "pdf": "https://doi.org/10.1111/sjos.12758",
+    "url": "https://doi.org/10.1111/sjos.12758",
     "selected": true
   },
   {
@@ -66,7 +66,7 @@
     "venue": "CRAN R Package",
     "type": "Software",
     "year": "2023",
-    "pdf": "https://cran.r-project.org/web/packages/MTAFT/index.html",
+    "url": "https://cran.r-project.org/web/packages/MTAFT/index.html",
     "selected": true
   },
   {

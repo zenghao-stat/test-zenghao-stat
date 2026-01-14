@@ -82,7 +82,7 @@ export const HAO_DATA: Content = {
   news: [
     {
       date: "2025/11",
-      content: "Our paper \"Transfer Learning for Spatial Autoregressive Models with Application to U.S. Presidential Election Prediction\" has been accepted to *Journal of Business & Economic Statistics*!"
+      content: "Our paper \"Transfer Learning for Spatial Autoregressive Models with Application to U.S. Presidential Election Prediction\" has been accepted to Journal of Business & Economic Statistics!"
     },
     {
       date: "2025/09",

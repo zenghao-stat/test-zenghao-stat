@@ -5,7 +5,6 @@ import {
   Mail, 
   Github, 
   FileText, 
-  Copy, 
   Menu,
   X,
   MapPin,
@@ -28,7 +27,7 @@ const THEMES = {
     bgAlt: 'bg-[#F5F3ED]',
     text: 'text-slate-800',
     textMuted: 'text-slate-500',
-    font: 'font-serif',
+    font: 'font-sans',
     navBg: 'bg-[#FFFCF5]/95',
     border: 'border-slate-200',
     accent: 'text-blue-700',
@@ -118,7 +117,13 @@ export default function App() {
   }, [selectedOnly, activeTypeFilter, activeYearFilter]);
 
   // 显示的论文列表 - 显示所有符合筛选条件的论文
-  const displayedPublications = filteredPublications;
+  const displayedPublications = useMemo(() => {
+    return [...filteredPublications].sort((a, b) => {
+      const yearDiff = Number(b.year) - Number(a.year);
+      if (yearDiff !== 0) return yearDiff;
+      return b.id - a.id;
+    });
+  }, [filteredPublications]);
 
   // 导航项
   const navItems = [
@@ -274,7 +279,7 @@ export default function App() {
                   <p className={`text-base italic ${currentTheme === 'night' ? 'text-slate-500' : 'text-slate-400'} mb-3`}>
                     Heterogeneity nourishes statistics; independence begets probability; uncertainty is eternal.
                   </p>
-                  <p className={`text-xl ${theme.textMuted} font-medium flex items-center gap-2`}>
+                  <p className={`text-xl ${theme.textMuted} flex items-center gap-2`}>
                     <GraduationCap size={20} />
                     {HAO_DATA.profile.title}
                   </p>
@@ -284,7 +289,7 @@ export default function App() {
                   </p>
                 </div>
 
-                <p className={`text-lg leading-relaxed max-w-3xl ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}>
+                <p className={`text-lg leading-relaxed max-w-3xl text-justify-hyphen ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}>
                   {HAO_DATA.profile.description}
                 </p>
 
@@ -352,7 +357,7 @@ export default function App() {
                 <div key={i} className="relative pl-8 pb-8 last:pb-0">
                   <div className={`absolute left-[-5px] top-1 h-2.5 w-2.5 rounded-full ${theme.accentBg} ring-4 ${currentTheme === 'night' ? 'ring-[#1E293B]' : currentTheme === 'lab' ? 'ring-slate-100' : 'ring-[#F5F3ED]'}`}></div>
                   <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-                    <span className={`text-sm font-bold ${theme.textMuted} min-w-[80px] font-sans`}>{item.date}</span>
+                    <span className={`text-sm font-medium ${theme.textMuted} min-w-[80px] font-sans`}>{item.date}</span>
                     <p 
                       className={`text-base ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}
                       dangerouslySetInnerHTML={{
@@ -390,21 +395,18 @@ export default function App() {
                         aria-pressed={selectedOnly}
                       >
                         <span
-                          className={`relative z-10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-colors ${selectedOnly ? 'text-white' : theme.textMuted}`}
+                          className={`px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-colors ${selectedOnly ? `${theme.accentBg} text-white` : theme.textMuted}`}
                         >
                           Selected
                         </span>
                         <span
-                          className={`relative z-10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-colors ${selectedOnly ? theme.textMuted : 'text-white'}`}
+                          className={`px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-colors ${selectedOnly ? theme.textMuted : `${theme.accentBg} text-white`}`}
                         >
                           All
                         </span>
-                        <span
-                          className={`pointer-events-none absolute inset-y-0 left-0 w-1/2 ${theme.accentBg} transition-transform duration-200 ${selectedOnly ? 'translate-x-0' : 'translate-x-full'}`}
-                        />
                       </button>
 
-                      {(['Conference', 'Journal', 'Preprint', 'Software'] as const).map(filter => (
+                      {(['Journal', 'Conference', 'Preprint', 'Software'] as const).map(filter => (
                         <button
                           key={filter}
                           type="button"
@@ -438,13 +440,28 @@ export default function App() {
                 </div>
 
                 <div className="space-y-6">
-                  {displayedPublications.map((pub) => (
+                  {displayedPublications.map((pub, idx) => (
                     <div 
                       key={pub.id} 
                       className={`group relative pl-4 border-l-2 ${theme.border} hover:border-current transition-colors duration-300`}
                     >
                       <h3 className={`text-xl font-semibold ${theme.text} group-hover:${theme.accent} transition-colors`}>
-                        {pub.title}
+                        <span className={`${theme.textMuted} font-sans font-bold mr-2`}>
+                          {displayedPublications.length - idx}.
+                        </span>
+                        {pub.url && pub.url !== '#' ? (
+                          <a
+                            href={pub.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`inline-flex items-center gap-1 hover:${theme.accent} transition-colors`}
+                          >
+                            <span>{pub.title}</span>
+                            <ExternalLink size={16} />
+                          </a>
+                        ) : (
+                          pub.title
+                        )}
                       </h3>
                       <div className={`mt-1 ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-600'}`}>
                         {pub.authors.split(',').map((author, i, arr) => (
@@ -469,16 +486,6 @@ export default function App() {
                         
                         {/* 链接按钮 */}
                         <div className="flex gap-2 ml-auto">
-                          {pub.url && (
-                            <a 
-                              href={pub.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`flex items-center gap-1 ${theme.textMuted} hover:${theme.accent} transition-colors`}
-                            >
-                              <ExternalLink size={14} /> arXiv
-                            </a>
-                          )}
                           {pub.pdf && pub.pdf !== '#' && (
                             <a 
                               href={pub.pdf}
@@ -499,13 +506,6 @@ export default function App() {
                               <Code size={14} /> Code
                             </a>
                           )}
-                          <button 
-                            onClick={() => navigator.clipboard.writeText(`@article{zeng${pub.year}, title={${pub.title}}}`)}
-                            className={`flex items-center gap-1 ${theme.textMuted} hover:${theme.accent} transition-colors`}
-                            title="复制 BibTeX"
-                          >
-                            <Copy size={14} /> BibTeX
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -554,7 +554,7 @@ export default function App() {
         {/* Talks 区域 */}
         <section id="talks" className={`py-16 ${theme.bg} border-t ${theme.border} transition-colors duration-300`}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>Talks</h2>
+            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>Talks and Presentations</h2>
             <div className={`space-y-0 border-l ${theme.border} ml-3`}>
               {HAO_DATA.talks.filter(talk => talk.show !== false).map((talk) => (
                 <div key={talk.id} className="relative pl-8 pb-8 last:pb-0">
