@@ -6,7 +6,8 @@
     "venue": "Journal of Business & Economic Statistics",
     "type": "Journal",
     "year": "2025",
-    "url": "https://arxiv.org/abs/2405.15600"
+    "url": "https://arxiv.org/abs/2405.15600",
+    "selected": true
   },
   {
     "id": 2,
@@ -15,7 +16,8 @@
     "venue": "IEEE TCSVT",
     "type": "Journal",
     "year": "2025",
-    "pdf": "https://ieeexplore.ieee.org/abstract/document/10960721/"
+    "pdf": "https://ieeexplore.ieee.org/abstract/document/10960721/",
+    "selected": true
   },
   {
     "id": 3,
@@ -24,7 +26,8 @@
     "venue": "NeurIPS 2025",
     "type": "Conference",
     "year": "2025",
-    "pdf": "https://openreview.net/forum?id=3veDGO9KiK"
+    "pdf": "https://openreview.net/forum?id=3veDGO9KiK",
+    "selected": true
   },
   {
     "id": 4,
@@ -33,7 +36,8 @@
     "venue": "ICML 2025",
     "type": "Conference",
     "year": "2025",
-    "pdf": "https://openreview.net/forum?id=jnJLZXSOin"
+    "pdf": "https://openreview.net/forum?id=jnJLZXSOin",
+    "selected": true
   },
   {
     "id": 5,
@@ -42,7 +46,8 @@
     "venue": "Journal of Statistical Planning and Inference",
     "type": "Journal",
     "year": "2024",
-    "pdf": "https://doi.org/10.1016/j.jspi.2024.106196"
+    "pdf": "https://doi.org/10.1016/j.jspi.2024.106196",
+    "selected": true
   },
   {
     "id": 6,
@@ -51,7 +56,8 @@
     "venue": "Scandinavian Journal of Statistics",
     "type": "Journal",
     "year": "2024",
-    "pdf": "https://doi.org/10.1111/sjos.12758"
+    "pdf": "https://doi.org/10.1111/sjos.12758",
+    "selected": true
   },
   {
     "id": 7,
@@ -60,7 +66,8 @@
     "venue": "CRAN R Package",
     "type": "Software",
     "year": "2023",
-    "pdf": "https://cran.r-project.org/web/packages/MTAFT/index.html"
+    "pdf": "https://cran.r-project.org/web/packages/MTAFT/index.html",
+    "selected": true
   },
   {
     "id": 8,
@@ -68,7 +75,8 @@
     "authors": "J Zhang, Y Yue, W Zhong, Hao Zeng",
     "venue": "Submitted to Statistical Research",
     "type": "Preprint",
-    "year": "2025"
+    "year": "2025",
+    "selected": false
   },
   {
     "id": 9,
@@ -77,7 +85,8 @@
     "venue": "Submitted to ICLR 2026",
     "type": "Preprint",
     "year": "2025",
-    "url": "https://arxiv.org/abs/2510.09133"
+    "url": "https://arxiv.org/abs/2510.09133",
+    "selected": true
   },
   {
     "id": 10,
@@ -86,7 +95,8 @@
     "venue": "Submitted to ICLR 2026",
     "type": "Preprint",
     "year": "2025",
-    "url": "https://arxiv.org/abs/2502.04037"
+    "url": "https://arxiv.org/abs/2502.04037",
+    "selected": false
   },
   {
     "id": 11,
@@ -95,7 +105,8 @@
     "venue": "Submitted to ICLR 2026",
     "type": "Preprint",
     "year": "2025",
-    "url": "https://arxiv.org/abs/2510.14581"
+    "url": "https://arxiv.org/abs/2510.14581",
+    "selected": false
   },
   {
     "id": 12,
@@ -104,7 +115,8 @@
     "venue": "Submitted to ICLR 2026",
     "type": "Preprint",
     "year": "2025",
-    "url": "https://arxiv.org/abs/2510.09717"
+    "url": "https://arxiv.org/abs/2510.09717",
+    "selected": false
   },
   {
     "id": 13,
@@ -112,7 +124,8 @@
     "authors": "Hao Zeng, H Huang, B Jing, H Wei",
     "venue": "In preparation",
     "type": "Preprint",
-    "year": "2025"
+    "year": "2025",
+    "selected": false
   },
   {
     "id": 14,
@@ -120,7 +133,8 @@
     "authors": "Hao Zeng, B Jing, H Wei",
     "venue": "In preparation",
     "type": "Preprint",
-    "year": "2025"
+    "year": "2025",
+    "selected": false
   },
   {
     "id": 15,
@@ -128,6 +142,7 @@
     "authors": "Hao Zeng, K Liu, B Jing, H Wei",
     "venue": "In preparation",
     "type": "Preprint",
-    "year": "2025"
+    "year": "2025",
+    "selected": false
   }
 ]

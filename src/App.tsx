@@ -81,34 +81,57 @@ const THEMES = {
 };
 
 type ThemeKey = keyof typeof THEMES;
+type PubType = 'Conference' | 'Journal' | 'Preprint' | 'Software';
+type YearFilter = '2026' | '2025' | '2024' | 'before 2024';
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ThemeKey>('paper');
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
-  const [pubFilter, setPubFilter] = useState('All');
+  const [selectedOnly, setSelectedOnly] = useState(true);
+  const [activeTypeFilter, setActiveTypeFilter] = useState<PubType | null>(null);
+  const [activeYearFilter, setActiveYearFilter] = useState<YearFilter | null>(null);
 
   const theme = THEMES[currentTheme];
 
   // 筛选论文
   const filteredPublications = useMemo(() => {
-    return HAO_DATA.publications.filter(p => 
-      pubFilter === 'All' || p.type === pubFilter
-    );
-  }, [pubFilter]);
+    let publications = HAO_DATA.publications;
+
+    if (selectedOnly) {
+      publications = publications.filter(p => p.selected);
+    }
+
+    if (activeTypeFilter) {
+      publications = publications.filter(p => p.type === activeTypeFilter);
+    }
+
+    if (activeYearFilter) {
+      if (activeYearFilter === 'before 2024') {
+        publications = publications.filter(p => Number(p.year) < 2024);
+      } else {
+        publications = publications.filter(p => p.year === activeYearFilter);
+      }
+    }
+
+    return publications;
+  }, [selectedOnly, activeTypeFilter, activeYearFilter]);
+
+  // 显示的论文列表 - 显示所有符合筛选条件的论文
+  const displayedPublications = filteredPublications;
 
   // 导航项
   const navItems = [
     { label: 'About', href: '#about' },
     { label: 'News', href: '#news' },
     { label: 'Publications', href: '#publications' },
+    { label: 'Teaching', href: '#teaching' },
+    { label: 'Talks', href: '#talks' },
     { label: 'Service', href: '#service' },
   ];
 
   const externalLinks = [
     { label: 'CV', href: HAO_DATA.profile.cvUrl },
-    { label: 'Teaching', href: HAO_DATA.profile.teachingUrl },
-    { label: 'Seminars', href: HAO_DATA.profile.seminarsUrl },
   ];
 
   return (
@@ -119,7 +142,7 @@ export default function App() {
           {/* Logo */}
           <a href="#about" className="flex items-center gap-2 group">
             <span className={`text-lg font-bold font-serif ${theme.text}`}>
-              Hao Zeng <span className={theme.textMuted}>曾浩</span>
+              {HAO_DATA.profile.name} <span className={theme.textMuted}>{HAO_DATA.profile.cnName}</span>
             </span>
           </a>
 
@@ -243,8 +266,9 @@ export default function App() {
               {/* 信息列 */}
               <div className="w-full lg:w-2/3 space-y-6">
                 <div>
-                  <h1 className={`text-4xl lg:text-5xl font-bold font-serif ${theme.text} tracking-tight mb-2`}>
-                    {HAO_DATA.profile.name} <span className={`text-2xl lg:text-3xl font-normal ${theme.textMuted}`}>（{HAO_DATA.profile.cnName}）</span>
+                  <h1 className={`text-4xl lg:text-5xl font-bold font-serif ${theme.text} tracking-tight mb-2 flex flex-col gap-1`}>
+                    <span>{HAO_DATA.profile.name}</span>
+                    <span className={`text-2xl lg:text-3xl font-normal ${theme.textMuted}`}>{HAO_DATA.profile.cnName}</span>
                   </h1>
                   {/* 座右铭 - 弱化颜色 */}
                   <p className={`text-base italic ${currentTheme === 'night' ? 'text-slate-500' : 'text-slate-400'} mb-3`}>
@@ -256,18 +280,18 @@ export default function App() {
                   </p>
                   <p className={`text-lg ${theme.textMuted} flex items-center gap-2 mt-1`}>
                     <MapPin size={18} />
-                    {HAO_DATA.profile.affiliations[0]}
+                    {HAO_DATA.profile.university}
                   </p>
                 </div>
 
                 <p className={`text-lg leading-relaxed max-w-3xl ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {HAO_DATA.profile.bio}
+                  {HAO_DATA.profile.description}
                 </p>
 
                 {/* 社交链接按钮 */}
                 <div className="flex flex-wrap gap-3 pt-2">
                   <a 
-                    href={HAO_DATA.profile.scholar}
+                    href={HAO_DATA.profile.googleScholar}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`inline-flex items-center gap-2 px-4 py-2 ${theme.cardBg} border ${theme.border} rounded-lg text-sm font-medium ${theme.textMuted} hover:${theme.text} hover:border-slate-400 transition-all`}
@@ -322,7 +346,7 @@ export default function App() {
         {/* News 区域 - 参考项目的时间线风格 */}
         <section id="news" className={`py-16 ${theme.bgAlt} transition-colors duration-300`}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>Recent News</h2>
+            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>News</h2>
             <div className={`space-y-0 border-l ${theme.border} ml-3`}>
               {HAO_DATA.news.map((item, i) => (
                 <div key={i} className="relative pl-8 pb-8 last:pb-0">
@@ -352,27 +376,69 @@ export default function App() {
               {/* 论文列表 */}
               <div className="space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <h2 className={`text-3xl font-bold font-serif ${theme.text}`}>Selected Publications</h2>
+                  <h2 className={`text-3xl font-bold font-serif ${theme.text}`}>
+                    Publications
+                  </h2>
                   
                   {/* 筛选器 */}
-                  <div className="flex flex-wrap gap-2 font-sans">
-                    {['All', 'Conference', 'Journal', 'Preprint', 'Software'].map(type => (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap gap-2 font-sans items-center">
                       <button
-                        key={type}
-                        onClick={() => setPubFilter(type)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all
-                          ${pubFilter === type 
-                            ? `${theme.accentBg} text-white shadow-md` 
-                            : `${theme.cardBg} border ${theme.border} ${theme.textMuted} hover:border-slate-400`}`}
+                        type="button"
+                        onClick={() => setSelectedOnly(v => !v)}
+                        className={`relative inline-flex items-center rounded-full border ${theme.border} ${theme.cardBg} overflow-hidden transition-all`}
+                        aria-pressed={selectedOnly}
                       >
-                        {type}
+                        <span
+                          className={`relative z-10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-colors ${selectedOnly ? 'text-white' : theme.textMuted}`}
+                        >
+                          Selected
+                        </span>
+                        <span
+                          className={`relative z-10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase transition-colors ${selectedOnly ? theme.textMuted : 'text-white'}`}
+                        >
+                          All
+                        </span>
+                        <span
+                          className={`pointer-events-none absolute inset-y-0 left-0 w-1/2 ${theme.accentBg} transition-transform duration-200 ${selectedOnly ? 'translate-x-0' : 'translate-x-full'}`}
+                        />
                       </button>
-                    ))}
+
+                      {(['Conference', 'Journal', 'Preprint', 'Software'] as const).map(filter => (
+                        <button
+                          key={filter}
+                          type="button"
+                          onClick={() => setActiveTypeFilter(prev => (prev === filter ? null : filter))}
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all
+                            ${activeTypeFilter === filter
+                              ? `${theme.accentBg} text-white shadow-md`
+                              : `${theme.cardBg} border ${theme.border} ${theme.textMuted} hover:border-slate-400`}`}
+                        >
+                          {filter}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 font-sans items-center justify-end">
+                      {(['2026', '2025', '2024', 'before 2024'] as const).map(year => (
+                        <button
+                          key={year}
+                          type="button"
+                          onClick={() => setActiveYearFilter(prev => (prev === year ? null : year))}
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all
+                            ${activeYearFilter === year
+                              ? `${theme.accentBg} text-white shadow-md`
+                              : `${theme.cardBg} border ${theme.border} ${theme.textMuted} hover:border-slate-400`}`}
+                        >
+                          {year}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-6">
-                  {filteredPublications.map((pub) => (
+                  {displayedPublications.map((pub) => (
                     <div 
                       key={pub.id} 
                       className={`group relative pl-4 border-l-2 ${theme.border} hover:border-current transition-colors duration-300`}
@@ -452,6 +518,64 @@ export default function App() {
           </div>
         </section>
 
+        {/* Teaching 区域 */}
+        <section id="teaching" className={`py-16 ${theme.bgAlt} border-t ${theme.border} transition-colors duration-300`}>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>Teaching</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {HAO_DATA.teaching.map((teach) => (
+                <div key={teach.id} className={`${theme.cardBg} border ${theme.border} p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col`}>
+                  <div className="flex flex-col gap-2 mb-4">
+                    <div className="flex justify-between items-start gap-4">
+                      <h3 className={`text-xl font-bold ${theme.text} leading-tight`}>{teach.title}</h3>
+                      <span className={`text-xs font-bold ${theme.accent} whitespace-nowrap font-sans bg-opacity-10 px-2 py-1 rounded-full ${theme.highlight} shrink-0`}>
+                        {teach.date.split('-')[0]}
+                      </span>
+                    </div>
+                    <div className={`flex flex-wrap gap-x-3 gap-y-1 text-sm ${theme.textMuted} font-sans`}>
+                      <span className="flex items-center gap-1"><BookOpen size={14} /> {teach.type}</span>
+                      <span className="flex items-center gap-1"><Award size={14} /> {teach.role}</span>
+                    </div>
+                    <div className={`text-sm ${theme.textMuted} font-sans flex items-center gap-1`}>
+                       <MapPin size={14} /> {teach.venue}
+                    </div>
+                  </div>
+                  {teach.excerpt && (
+                    <p className={`mt-auto pt-4 border-t ${theme.border} ${currentTheme === 'night' ? 'text-slate-300' : 'text-slate-600'} text-sm leading-relaxed`}>
+                      {teach.excerpt}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Talks 区域 */}
+        <section id="talks" className={`py-16 ${theme.bg} border-t ${theme.border} transition-colors duration-300`}>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className={`text-3xl font-bold font-serif ${theme.text} mb-10`}>Talks</h2>
+            <div className={`space-y-0 border-l ${theme.border} ml-3`}>
+              {HAO_DATA.talks.filter(talk => talk.show !== false).map((talk) => (
+                <div key={talk.id} className="relative pl-8 pb-8 last:pb-0">
+                  <div className={`absolute left-[-5px] top-1.5 h-2.5 w-2.5 rounded-full ${theme.accentBg} ring-4 ${currentTheme === 'night' ? 'ring-[#1E293B]' : currentTheme === 'lab' ? 'ring-slate-100' : 'ring-[#F5F3ED]'}`}></div>
+                  <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+                    <span className={`text-sm font-bold ${theme.textMuted} min-w-[100px] font-sans`}>{talk.date.substring(0, 7)}</span>
+                    <div>
+                      <h4 className={`text-lg font-bold ${theme.text}`}>{talk.title}</h4>
+                      <div className={`flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm ${theme.textMuted}`}>
+                        <span>{talk.type}</span>
+                        <span>@ {talk.venue}</span>
+                        <span className="flex items-center gap-1"><MapPin size={12} /> {talk.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Service 区域 */}
         <section id="service" className={`py-16 ${theme.bgAlt} transition-colors duration-300`}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -482,7 +606,7 @@ export default function App() {
         <div className={`container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm ${theme.textMuted} font-sans`}>
           <p>&copy; 2025 Hao Zeng. All rights reserved.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
-            <a href={HAO_DATA.profile.scholar} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>Google Scholar</a>
+            <a href={HAO_DATA.profile.googleScholar} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>Google Scholar</a>
             <a href={HAO_DATA.profile.github} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>GitHub</a>
             <a href={HAO_DATA.profile.openreview} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>OpenReview</a>
           </div>
