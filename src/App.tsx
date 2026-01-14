@@ -9,7 +9,6 @@ import {
   X,
   MapPin,
   GraduationCap,
-  Book,
   Award,
   Palette,
   Check,
@@ -312,14 +311,6 @@ export default function App() {
                     <Github size={16} /> GitHub
                   </a>
                   <a 
-                    href={HAO_DATA.profile.openreview}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 px-4 py-2 ${theme.cardBg} border ${theme.border} rounded-lg text-sm font-medium ${theme.textMuted} hover:${theme.text} hover:border-slate-400 transition-all`}
-                  >
-                    <Book size={16} /> OpenReview
-                  </a>
-                  <a 
                     href={`mailto:${HAO_DATA.profile.email}`}
                     className={`inline-flex items-center gap-2 px-4 py-2 ${theme.cardBg} border ${theme.border} rounded-lg text-sm font-medium ${theme.textMuted} hover:${theme.text} hover:border-slate-400 transition-all`}
                   >
@@ -608,18 +599,18 @@ export default function App() {
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href={HAO_DATA.profile.googleScholar} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>Google Scholar</a>
             <a href={HAO_DATA.profile.github} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>GitHub</a>
-            <a href={HAO_DATA.profile.openreview} target="_blank" rel="noopener noreferrer" className={`hover:${theme.text} transition-colors`}>OpenReview</a>
           </div>
         </div>
       </footer>
 
       {/* 全局样式 */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;700&display=swap');
-        :root { --font-serif: 'Crimson Pro', Georgia, serif; --font-sans: 'Inter', -apple-system, sans-serif; }
-        body { font-family: ${currentTheme === 'paper' ? 'var(--font-serif)' : 'var(--font-sans)'}; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        :root { --font-sans: 'Inter', -apple-system, sans-serif; --font-serif: var(--font-sans); }
+        body { font-family: var(--font-sans); }
         .font-sans { font-family: var(--font-sans); }
         .font-serif { font-family: var(--font-serif); }
+        .text-justify-hyphen { text-align: justify; text-justify: inter-word; hyphens: auto; overflow-wrap: anywhere; }
         html { scroll-behavior: smooth; }
       `}</style>
     </div>

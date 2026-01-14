@@ -12,7 +12,6 @@ export interface Profile {
   email: string;
   googleScholar: string;
   github: string;
-  openreview?: string;
   siteUrl?: string;
   cvUrl?: string;
   teachingUrl?: string;
